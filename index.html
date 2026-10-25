@@ -14,7 +14,7 @@
   
   <script>
     // URL GOOGLE APPS SCRIPT RASMI (TERBINA DALAM)
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6rQutIN4-Aqjz-bgDbJUpSTnB575cfshNnJPDoxXBusjgGiEJHh8WWhvqRWJ6pFmoyg/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycVNCW3f8HzGWthpgqEqsRRhvrNWe-OcOTLyo4Iu-RW_e_5Ymv3KQfoR-4brax9b3bvQ/exec";
 
     // 10 OFFICIAL QUESTIONS
     const QUIZ_QUESTIONS = [
@@ -218,15 +218,19 @@
       // 1. Simpan salinan ke dalam simpanan tempatan (LocalStorage)
       saveLocalSubmission(row);
 
-      // 2. Hantar terus ke Google Apps Script (Google Sheets)
+      // 2. Hantar terus ke Google Apps Script guna URLSearchParams (Format Borang Form standard)
       try {
+        const params = new URLSearchParams();
+        params.append('jenis_ujian', testType);
+        params.append('skor_total', score);
+        QUIZ_QUESTIONS.forEach(item => {
+          params.append(`q${item.no}`, row[`q${item.no}`]);
+        });
+
         await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(row)
+          body: params
         });
         console.log("Data kuiz berjaya dipindahkan ke Google Sheets.");
       } catch (err) {
